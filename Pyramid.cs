@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace qbert
 {
-    class Pyramid
+    public class Pyramid
     {
         private int[,] cubes = new int[7, 13];
         private Canvas _canvas;
@@ -94,15 +94,15 @@ namespace qbert
                         cubeSide.Fill = Brushes.Gray;
 
                         //set points from cube front
-                        Point cfT = new Point(50 * y - 50+_horizontalOffset, 50 * x + 50+_verticalOffset);
-                        Point cfL = new Point(50 * y - 50+_horizontalOffset, 50*x+75+_verticalOffset);
-                        Point cfB = new Point(50 * y+_horizontalOffset, 50 * x + 100+_verticalOffset);
-                        Point cfR = new Point(50 * y+_horizontalOffset, 50 * x + 75+_verticalOffset);
+                        Point cfT = new Point(50 * y - 50 + _horizontalOffset, 50 * x + 50 + _verticalOffset);
+                        Point cfL = new Point(50 * y - 50 + _horizontalOffset, 50 * x + 75 + _verticalOffset);
+                        Point cfB = new Point(50 * y + _horizontalOffset, 50 * x + 100 + _verticalOffset);
+                        Point cfR = new Point(50 * y + _horizontalOffset, 50 * x + 75 + _verticalOffset);
 
                         Point csT = cfR;
                         Point csL = cfB;
-                        Point csB = new Point(50 * y + 50 + _horizontalOffset, 50 * x + 75 + _verticalOffset); 
-                        Point csR=new Point(50 * y + 50 + _horizontalOffset, 50 * x + 50 + _verticalOffset);
+                        Point csB = new Point(50 * y + 50 + _horizontalOffset, 50 * x + 75 + _verticalOffset);
+                        Point csR = new Point(50 * y + 50 + _horizontalOffset, 50 * x + 50 + _verticalOffset);
                         PointCollection frontPoints = new PointCollection();
                         frontPoints.Add(cfT);
                         frontPoints.Add(cfL);
@@ -124,9 +124,9 @@ namespace qbert
                         r.Fill = Brushes.Red;
                         r.Width = 50;
                         r.Height = 50;
-                    //    _canvas.Children.Add(r);
-                    //    Canvas.SetLeft(r, 50 * y+_horizontalOffset);
-                    //    Canvas.SetTop(r, 50 * x+_verticalOffset);
+                        //    _canvas.Children.Add(r);
+                        //    Canvas.SetLeft(r, 50 * y+_horizontalOffset);
+                        //    Canvas.SetTop(r, 50 * x+_verticalOffset);
                     }
 
 
@@ -134,6 +134,18 @@ namespace qbert
                 Console.WriteLine();
 
             }
+        }
+
+        public Point initializePlayer()
+        {
+            for (int y = 0; y < cubes.GetLength(1); y++)
+            {
+                if (cubes[0, y] == 1)
+                {
+                    return new Point(0, y);
+                }
+            }
+            return new Point(-1, -1);//no start found
         }
     }
 }
