@@ -15,10 +15,11 @@ using System.Windows.Shapes;
 
 namespace qbert
 {
-    enum PlayerState { alive, dying, dead };
+    enum PlayerState { alive, moving, dying, dead };
     public class Player
     {
         private Point position;
+        private Point moveToPosition;
         private int health;
         private PlayerState state;
         private Pyramid pyramid;
@@ -26,6 +27,9 @@ namespace qbert
         private Rectangle player;
         private int _verticalOffset;
         private int _horizontalOffset;
+        private double framesToMove = 1280/60;
+        //when testing my time was 1.28 seconds to move
+        private int counter = 0;
 
         /// <summary>
         /// default constructor
@@ -38,6 +42,8 @@ namespace qbert
             pyramid = p;
             canvas = c;
             position = pyramid.initializePlayer();
+
+            
             _horizontalOffset = 50;
             _verticalOffset = 50;
             player = new Rectangle();
@@ -59,10 +65,33 @@ namespace qbert
         /// <returns>true for alive, false when dead</returns>
         public bool update()
         {
-            if (Keyboard.IsKeyDown(Key.Left))
+            if (state == PlayerState.alive)
             {
-                position = new Point(position.X + 1, position.Y - 1);
+                counter = 0;//reset
+                if (Keyboard.IsKeyDown(Key.Left))
+                {
+                    
+                    moveToPosition = new Point(position.X + 1, position.Y - 1);
+                    state = PlayerState.moving;
+                    draw();
+                }
+                if (Keyboard.IsKeyDown(Key.Right))
+                {
+                    moveToPosition = new Point(position.X + 1, position.Y + 1);
+                    state = PlayerState.moving;
+                    draw();
+                }
+            }
+            else if (state == PlayerState.moving)
+            {
+                position = new Point(position.X + (moveToPosition.X - position.X) * counter / framesToMove, position.Y + (moveToPosition.Y - position.Y) * counter / framesToMove);
                 draw();
+                counter++;
+                if (counter > framesToMove)
+                {
+                    position = moveToPosition;
+                    state = PlayerState.alive;
+                }
             }
             return true;//make sure to change so you can get the logic in there
         }//end update
