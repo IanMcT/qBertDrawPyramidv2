@@ -75,9 +75,21 @@ namespace qbert
                     state = PlayerState.moving;
                     draw();
                 }
-                if (Keyboard.IsKeyDown(Key.Right))
+                if (Keyboard.IsKeyDown(Key.Down))
                 {
                     moveToPosition = new Point(position.X + 1, position.Y + 1);
+                    state = PlayerState.moving;
+                    draw();
+                }
+                if (Keyboard.IsKeyDown(Key.Up))
+                {
+                    moveToPosition = new Point(position.X - 1, position.Y - 1);
+                    state = PlayerState.moving;
+                    draw();
+                }
+                if (Keyboard.IsKeyDown(Key.Right))
+                {
+                    moveToPosition = new Point(position.X - 1, position.Y + 1);
                     state = PlayerState.moving;
                     draw();
                 }
