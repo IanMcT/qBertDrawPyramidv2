@@ -15,9 +15,11 @@ using System.Windows.Shapes;
 
 namespace qbert
 {
+    public enum CubeColors  {Red, Blue};
     public class Pyramid
     {
         private int[,] cubes = new int[7, 13];
+        private Polygon[,] cubeTops = new Polygon[7, 13];
         private Canvas _canvas;
         private int _verticalOffset;
         private int _horizontalOffset;
@@ -32,6 +34,7 @@ namespace qbert
                 for (int y = 0; y < cubes.GetLength(1); y++)
                 {
                     cubes[x, y] = 0;
+                    cubeTops[x, y] = new Polygon();
                 }
             }
             //MessageBox.Show(cubes.GetLength(0).ToString());
@@ -44,12 +47,16 @@ namespace qbert
                 if (numberOfCubes % 2 == 1)
                 {
                     cubes[x, midPoint] = 1;
+                    cubeTops[x, midPoint].Fill = Brushes.Red;
                     offset = 2;
                 }
                 for (int i = 0; i < numberOfCubes / 2; i++)
                 {
                     cubes[x, midPoint - offset] = 1;
                     cubes[x, midPoint + offset] = 1;
+                    cubeTops[x, midPoint - offset].Fill = Brushes.Red;
+                    cubeTops[x, midPoint + offset].Fill = Brushes.Red;
+
                     offset += 2;
                 }
 
@@ -103,6 +110,12 @@ namespace qbert
                         Point csL = cfB;
                         Point csB = new Point(50 * y + 50 + _horizontalOffset, 50 * x + 75 + _verticalOffset);
                         Point csR = new Point(50 * y + 50 + _horizontalOffset, 50 * x + 50 + _verticalOffset);
+                        //set points for cube Top
+                        Point cTT, CTL, CTB, CTR;
+                        cTT = new Point(cfR.X, cfR.Y - 50);
+                        CTL = cfT;
+                        CTB = cfR;
+                        CTR = csR;
                         PointCollection frontPoints = new PointCollection();
                         frontPoints.Add(cfT);
                         frontPoints.Add(cfL);
@@ -113,10 +126,17 @@ namespace qbert
                         sidePoints.Add(csL);
                         sidePoints.Add(csB);
                         sidePoints.Add(csR);
+                        PointCollection topPoints = new PointCollection();
+                        topPoints.Add(cTT);
+                        topPoints.Add(CTL);
+                        topPoints.Add(CTB);
+                        topPoints.Add(CTR);
                         cubeFront.Points = frontPoints;
                         cubeSide.Points = sidePoints;
+                        cubeTops[x, y].Points = topPoints;
                         _canvas.Children.Add(cubeFront);
                         _canvas.Children.Add(cubeSide);
+                        _canvas.Children.Add(cubeTops[x, y]);
                         //draw a square
 
                         //replace later with cube code
@@ -134,6 +154,26 @@ namespace qbert
                 Console.WriteLine();
 
             }
+        }//end draw
+
+        public void cubeLandedOn(Point p)
+        {
+            cubeTops[(int)p.X, (int)p.Y].Fill = Brushes.Blue;
+        }//end cubeLandedOn
+
+        public bool isValidMove(Point p)
+        {
+            try
+            {
+                if (cubes[(int)p.X, (int)p.Y] != 1)
+                {
+                    return false;
+                }
+            } catch (Exception ex)
+            {
+                return false;
+            }
+            return true;
         }
 
         public Point initializePlayer()
