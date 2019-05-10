@@ -70,28 +70,24 @@ namespace qbert
                 counter = 0;//reset
                 if (Keyboard.IsKeyDown(Key.Left))
                 {
-                    
+
                     moveToPosition = new Point(position.X + 1, position.Y - 1);
-                    state = PlayerState.moving;
-                    draw();
+                    drawIfValid();
                 }
                 if (Keyboard.IsKeyDown(Key.Down))
                 {
                     moveToPosition = new Point(position.X + 1, position.Y + 1);
-                    state = PlayerState.moving;
-                    draw();
+                    drawIfValid();
                 }
                 if (Keyboard.IsKeyDown(Key.Up))
                 {
                     moveToPosition = new Point(position.X - 1, position.Y - 1);
-                    state = PlayerState.moving;
-                    draw();
+                    drawIfValid();
                 }
                 if (Keyboard.IsKeyDown(Key.Right))
                 {
                     moveToPosition = new Point(position.X - 1, position.Y + 1);
-                    state = PlayerState.moving;
-                    draw();
+                    drawIfValid();
                 }
             }
             else if (state == PlayerState.moving)
@@ -102,11 +98,49 @@ namespace qbert
                 if (counter > framesToMove)
                 {
                     position = moveToPosition;
+                    pyramid.cubeLandedOn(position);
                     state = PlayerState.alive;
                 }
             }
+            else if (state == PlayerState.dying)
+            {
+                position = new Point(position.X + 1, position.Y);
+                // MessageBox.Show(Canvas.GetTop(player).ToString() + "\n" + canvas.ActualHeight);
+                if (Canvas.GetTop(player) > canvas.ActualHeight)
+                {
+                    MessageBoxResult mbr = MessageBox.Show("Game Over, click OK to close");
+                    if (mbr == MessageBoxResult.OK)
+                    {
+                        state = PlayerState.dead;
+                    }
+                    else
+                    {
+                        state = PlayerState.dead;
+                    }
+                }
+                draw();
+            }
+            else if (state == PlayerState.dead)
+            {
+                canvas.Children.RemoveRange(0, canvas.Children.Count - 1);
+            }
             return true;//make sure to change so you can get the logic in there
         }//end update
+
+        private void drawIfValid()
+        {
+            if (pyramid.isValidMove(moveToPosition))
+            {
+                state = PlayerState.moving;
+                draw();
+            }
+            else
+            {
+                state = PlayerState.dying;
+                draw();
+            }
+        }
+
         public void draw()
         {
             Canvas.SetLeft(player, 50 * position.Y + 25 + _horizontalOffset);
