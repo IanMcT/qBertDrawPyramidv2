@@ -23,10 +23,11 @@ namespace qbert
     public partial class MainWindow : Window
     {
         //Global Variables
-        Pyramid pyramid;
+        public Pyramid pyramid;
         public GameState gameState;
         public System.Windows.Threading.DispatcherTimer gameTimer;
         public Player player;
+        public HighScores highScores;
 
         /// <summary>
         /// Constructor - set all initial values
@@ -34,15 +35,22 @@ namespace qbert
         public MainWindow()
         {
             InitializeComponent();
+
+            highScores = new HighScores();
+            highScores.getHighScores();
+            highScores.showHighScores();
+
+            highScores.addHighScore(1000, "David");
+
             gameState = GameState.movingToGame;
-            gameTimer =  new System.Windows.Threading.DispatcherTimer(); ;
+            gameTimer = new System.Windows.Threading.DispatcherTimer(); 
             //start Timer
             gameTimer.Tick += GameTimer_Tick;
             gameTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / 60);//fps
             gameTimer.Start();
 
-            
-            
+
+
         }//end MainWindow
 
         /// <summary>
@@ -59,7 +67,10 @@ namespace qbert
                 gameState = GameState.GameOn;
                 player = new Player(pyramid, canvas);
             }//done movingtogame
-            else if (gameState == GameState.GameOn) { }//done GameOn
+            else if (gameState == GameState.GameOn)
+            {
+                player.update();//add logic for death
+            }//done GameOn
         }//end GameTimer_Tick
     }//end Class
 }//end Namespace
